@@ -1,0 +1,59 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+fs = 8000  # Sampling frequency (Hz)
+duration = 0.05  # Duration in seconds
+t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+
+#  Generate first sine wave frequency: 440 Hz 
+f1 = 440
+signal1 = np.sin(2 * np.pi * f1 * t)
+
+# Generate second sine wave with a different frequency Frequency: 880 Hz
+f2 = 880
+signal2 = np.sin(2 * np.pi * f2 * t)
+
+#  Add both signals
+combined_signal = signal1 + signal2
+
+#  Fast Fourier Transform (FFT) 
+yf = np.fft.fft(combined_signal)
+xf = np.fft.fftfreq(len(t), 1 / fs)
+# Consider only the positive frequencies
+positive_mask = xf >= 0
+xf_pos = xf[positive_mask]
+yf_mag = 2.0 / len(t) * np.abs(yf[positive_mask])
+
+# 
+Plotting Results 
+plt.figure(figsize=(12, 8))
+
+# Plot Signal 1
+plt.subplot(3, 1, 1)
+plt.plot(t, signal1, color="blue")
+plt.title("440 Hz Sine Wave")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+ 
+
+# Plot Combined Signal
+plt.subplot(3, 1, 2)
+plt.plot(t, combined_signal, color="purple")
+plt.title("Combined Signal (440 Hz + 880 Hz)")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+
+# Plot FFT Spectrum
+plt.subplot(3, 1, 3)
+plt.plot(xf_pos, yf_mag, color="red")
+plt.title("FFT Frequency Spectrum of Combined Signal")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Magnitude")
+plt.xlim(0, 2000)
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
